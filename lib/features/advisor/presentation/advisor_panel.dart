@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/flutlytics_theme.dart';
+
 import '../../charts/data/chart_catalog.dart';
 import '../../charts/presentation/chart_detail_page.dart';
 import '../domain/advisor_engine.dart';
@@ -20,6 +22,7 @@ class _AdvisorPanelState extends State<AdvisorPanel> {
   String? _nodeId = AdvisorEngine.start;
   AdvisorRecommendation? _result;
   bool _showAlternatives = false;
+  bool _showAllIntents = false;
 
   void _choose(AdvisorOption option) {
     setState(() {
@@ -48,6 +51,7 @@ class _AdvisorPanelState extends State<AdvisorPanel> {
 
   void _advance(String id) {
     _showAlternatives = false;
+    _showAllIntents = false;
     _result = AdvisorEngine.recommendations[id];
     _nodeId = _result == null ? id : null;
     if (_nodeId != null) {
@@ -63,6 +67,7 @@ class _AdvisorPanelState extends State<AdvisorPanel> {
       _nodeId = AdvisorEngine.start;
       _result = null;
       _showAlternatives = false;
+      _showAllIntents = false;
     });
   }
 
@@ -84,13 +89,15 @@ class _AdvisorPanelState extends State<AdvisorPanel> {
           children: [
             Row(
               children: [
-                const Icon(Icons.auto_awesome),
+                const Icon(Icons.auto_awesome, color: FlutlyticsColors.primary),
                 const SizedBox(width: 8),
-                Text(
-                  'Asistente de gráficas',
-                  style: Theme.of(context).textTheme.titleMedium,
+                Expanded(
+                  child: Text(
+                    'Asistente de visualizaciones',
+                    maxLines: 2,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                 ),
-                const Spacer(),
                 IconButton(
                   tooltip: 'Reiniciar conversación',
                   onPressed: _restart,
@@ -121,10 +128,23 @@ class _AdvisorPanelState extends State<AdvisorPanel> {
                 spacing: 6,
                 runSpacing: 6,
                 children: [
-                  for (final option in node.options)
+                  for (final option
+                      in _nodeId == AdvisorEngine.start && !_showAllIntents
+                          ? node.options.take(6)
+                          : node.options)
                     ActionChip(
                       label: Text(option.label),
                       onPressed: () => _choose(option),
+                    ),
+                  if (_nodeId == AdvisorEngine.start && node.options.length > 6)
+                    ActionChip(
+                      avatar: Icon(
+                        _showAllIntents ? Icons.expand_less : Icons.add,
+                        size: 18,
+                      ),
+                      label: Text(_showAllIntents ? 'Ver menos' : 'Ver más'),
+                      onPressed: () =>
+                          setState(() => _showAllIntents = !_showAllIntents),
                     ),
                 ],
               ),
@@ -150,7 +170,7 @@ class _AdvisorPanelState extends State<AdvisorPanel> {
                     ),
                     child: const Text('Ver ejemplo'),
                   ),
-                  OutlinedButton(
+                  FilledButton.tonal(
                     onPressed: () =>
                         setState(() => _showAlternatives = !_showAlternatives),
                     child: const Text('Ver alternativas'),
@@ -182,12 +202,12 @@ class _AdvisorPanelState extends State<AdvisorPanel> {
                     controller: _input,
                     onSubmitted: (_) => _submit(),
                     decoration: const InputDecoration(
-                      hintText: 'Ej.: comparar ventas por categoría',
+                      hintText: 'Ej. comparar ventas por categoría',
                       isDense: true,
                     ),
                   ),
                 ),
-                IconButton(
+                IconButton.filled(
                   tooltip: 'Enviar mensaje',
                   onPressed: _submit,
                   icon: const Icon(Icons.send),

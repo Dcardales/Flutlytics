@@ -61,21 +61,27 @@ class _ComparisonPageState extends State<ComparisonPage> {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              Text(
+                'Compara cómo cada librería presenta la misma visualización.',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 4),
               const Text(
                 'Comparación cualitativa de APIs y funciones documentadas. Sin métricas de rendimiento.',
               ),
-              const SizedBox(height: 12),
-              DropdownButton<String>(
-                value: conceptId,
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                initialValue: conceptId,
                 isExpanded: true,
+                decoration: const InputDecoration(labelText: 'Visualización'),
                 items: [
                   for (final item in ChartCatalog.concepts)
                     DropdownMenuItem(value: item.id, child: Text(item.name)),
                 ],
                 onChanged: (value) => setState(() => conceptId = value!),
               ),
-              const SizedBox(height: 8),
-              for (final library in ChartLibrary.values)
+              const SizedBox(height: 16),
+              for (final library in ChartLibrary.values) ...[
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -86,10 +92,11 @@ class _ComparisonPageState extends State<ComparisonPage> {
                           library.label,
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
+                        const SizedBox(height: 4),
                         Text(
                           'Soporte: ${concept.support[library]!.label} · ${ChartRenderer.hasDemo(concept.id, library) ? 'demo disponible' : 'demo pendiente'}',
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
                         SizedBox(
                           height: 210,
                           child: ChartRenderer.buildChart(
@@ -97,7 +104,7 @@ class _ComparisonPageState extends State<ComparisonPage> {
                             library: library,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
                         Text('Dificultad aproximada: ${notes[library]!.$1}'),
                         Text('Interactividad: ${notes[library]!.$2}'),
                         Text('Personalización: ${notes[library]!.$3}'),
@@ -108,6 +115,8 @@ class _ComparisonPageState extends State<ComparisonPage> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 12),
+              ],
             ],
           ),
         ),

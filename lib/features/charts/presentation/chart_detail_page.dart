@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/flutlytics_theme.dart';
+
 import '../data/chart_catalog.dart';
 import '../data/chart_combinations.dart';
 import '../data/sample_datasets.dart';
 import '../domain/chart_concept.dart';
 import 'chart_renderer.dart';
+import 'combination_detail_page.dart';
 
 class ChartDetailPage extends StatefulWidget {
   const ChartDetailPage({super.key, required this.concept});
@@ -32,14 +35,32 @@ class _ChartDetailPageState extends State<ChartDetailPage> {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              Text(
-                concept.name,
-                style: Theme.of(context).textTheme.headlineMedium,
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        concept.name,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          Chip(label: Text(concept.level.label)),
+                          Chip(label: Text(concept.category.label)),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(concept.description),
+                    ],
+                  ),
+                ),
               ),
-              Text('${concept.level.label} · ${concept.category.label}'),
-              const SizedBox(height: 14),
-              Text(concept.description),
-              const SizedBox(height: 14),
+              const SizedBox(height: 20),
               _section(context, 'Problema que resuelve', concept.problemSolved),
               _section(context, 'Cuándo utilizarla', concept.recommendedFor),
               _section(context, 'Cuándo evitarla', concept.avoidWhen),
@@ -49,10 +70,12 @@ class _ChartDetailPageState extends State<ChartDetailPage> {
                 'Ejemplo por librería',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
-              DropdownButton<ChartLibrary>(
+              const SizedBox(height: 8),
+              DropdownButtonFormField<ChartLibrary>(
                 key: const Key('library-selector'),
-                value: selected,
+                initialValue: selected,
                 isExpanded: true,
+                decoration: const InputDecoration(labelText: 'Librería'),
                 items: [
                   for (final library in ChartLibrary.values)
                     DropdownMenuItem(
@@ -62,8 +85,12 @@ class _ChartDetailPageState extends State<ChartDetailPage> {
                 ],
                 onChanged: (value) => setState(() => selected = value!),
               ),
-              Text('Soporte: ${concept.support[selected]!.label}'),
               const SizedBox(height: 8),
+              Text(
+                'Soporte: ${concept.support[selected]!.label}',
+                style: const TextStyle(color: FlutlyticsColors.secondaryText),
+              ),
+              const SizedBox(height: 12),
               Card(
                 child: SizedBox(
                   height: switch (concept.id) {
@@ -84,6 +111,7 @@ class _ChartDetailPageState extends State<ChartDetailPage> {
                   ),
                 ),
               ),
+              const SizedBox(height: 12),
               if (dataset != null) ...[
                 Text(
                   'Dataset local',
@@ -143,10 +171,20 @@ class _ChartDetailPageState extends State<ChartDetailPage> {
               if (concept.compatibleCombinations.isEmpty)
                 const Text('No hay una combinación registrada aún.'),
               for (final id in concept.compatibleCombinations)
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(ChartCombinations.all[id]!.name),
-                  subtitle: Text(ChartCombinations.all[id]!.reason),
+                Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.layers_rounded),
+                    title: Text(ChartCombinations.all[id]!.name),
+                    subtitle: Text(ChartCombinations.all[id]!.reason),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => CombinationDetailPage(
+                          combination: ChartCombinations.all[id]!,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
             ],
           ),

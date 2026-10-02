@@ -95,6 +95,19 @@ void main() {
 
     expect(keys.toSet(), hasLength(registrations.length));
     expect(registrations, hasLength(260));
+    expect(ChartLibrary.values, hasLength(4));
+    for (final library in ChartLibrary.values) {
+      expect(registrations.where((r) => r.library == library), hasLength(65));
+    }
+    for (final concept in ChartCatalog.concepts) {
+      expect(
+        registrations.where((r) => r.conceptId == concept.id),
+        hasLength(4),
+      );
+      for (final library in ChartLibrary.values) {
+        expect(keys, contains((concept.id, library)));
+      }
+    }
     for (final registration in registrations) {
       expect(conceptIds, contains(registration.conceptId));
       expect(ChartLibrary.values, contains(registration.library));
