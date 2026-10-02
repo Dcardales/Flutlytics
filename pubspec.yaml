@@ -1,0 +1,23 @@
+﻿name: flutlytics_v1
+description: Chart Advisor, una guía interactiva de visualización de datos.
+publish_to: none
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  fl_chart: ^1.2.0
+  syncfusion_flutter_charts: ^35.1.37
+  graphic: ^2.7.0
+  graphify: ^1.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
