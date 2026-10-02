@@ -2,9 +2,9 @@
 
 ## Progreso de implementación
 
-Batches 1-8 completed at 160/260 demos. Batch 9 adds 20 demos for `scatter`, `bubble`, `connected-scatter`, `error-bar`, and `range-column`. Batch 10 adds 20 demos for `range-area`, `candlestick`, `ohlc`, `waterfall`, and `gantt`. Batch 11 adds 20 demos for `diverging-stacked-bar`, `scatterplot-matrix`, `ternary-plot`, `fan-chart`, and `calibration-plot`. Batch 12 adds 20 demos for `network-graph`, `qq-plot`, `parallel-coordinates`, `contour`, and `calendar-heatmap`. Current total: **240/260 demos (92.31%)**.
+Batches 1-13 are complete. Batch 13 adds `funnel`, `pyramid` (population pyramid), `gauge`, `bullet`, and `timeline`. Current total: **260/260 demos (100%)**: 65 concepts, 40 basic + 25 advanced, implemented once per each of the four libraries.
 
-The production catalog contains 40 basic and 25 advanced concepts with data profiles and support classification for each library. The implementation now has 240 of 260 demos.
+The production catalog contains 40 basic and 25 advanced concepts with data profiles and support classification for each library. The implementation now has all **260 of 260** demos, with exactly 65 registrations per library and four registrations per concept.
 
 Batch 5 conserva el significado analítico de cada visualización. `bar-line` comparte periodos y usa ventas en millones COP con un margen porcentual; FL Chart superpone dos gráficas alineadas con escalas explícitas, Syncfusion y Graphify declaran el segundo eje, y Graphic reescala el porcentaje sobre el eje común y lo identifica en la leyenda. `area-line` muestra consumo real como área y meta como línea, ambos en kWh. Las dos clases small multiples usan paneles titulados, mismo dominio/categorías y escalas globales; el layout pasa de una a dos columnas a 420 px. Graphify usa una instancia JSON serializable por panel para mantener la configuración pequeña y permite generar SVG con ECharts SSR de forma independiente. `sparkline` acompaña cada minigráfica sin ejes completos con nombre, valor y unidad; Syncfusion usa `SfSparkLineChart` nativo. Las opciones Graphify de Batch 5 serializan y se aceptan en el wrapper; se generaron **14 SVG (48 850 bytes)** con el ECharts 5.5.0 empaquetado para bar-line, area-line, cada panel small multiples y cada KPI sparkline. El WebView/iframe real sigue pendiente.
 
@@ -67,6 +67,14 @@ Q-Q uses 48 service times, plotting positions `(i-0.5)/n`, inverse normal quanti
 Contour evaluates a deterministic sum of three smooth Gaussian peaks on a 25×20 abstract XY grid. Marching Squares extracts six levels using linear edge interpolation; the chart libraries draw the resulting isoline segments. The surface is an abstract tourism-demand field, not a geographic map. Calendar Heatmap has 181 unique dates from October 2025 through March 2026, mapped to Monday-first week and weekday coordinates with weekend and seasonal intensity. FL Chart and Syncfusion draw square marks, Graphic draws square PointMarks, and Graphify uses ECharts native `calendar` plus `heatmap`.
 
 All 20 registrations and 30 responsive mounts at 320/500 px passed. Graphify options serialize to JSON, construct GraphifyView, and generated SVG with bundled ECharts 5.5.0 SSR (7,301; 26,843; 12,301; 89,753; and 55,249 bytes). Actual WebView/iframe execution remains unverified. Support codes are `CCCN`, `CCCC`, `CCCN`, `CCCC`, and `CCCN` in the order above. Calendar Heatmap changed from `SSSN` to `CCCN`: one chart per library now draws all daily cells from shared calendar coordinates, so the first three implementations are custom chart compositions rather than simulated multi-chart layouts.
+## Batch 13 - Performance, Process & Functional Completion
+
+`funnel` models five ordered reservation stages and derives conversion from the previous stage, conversion from the initial stage and drop-off. FL Chart and Graphic use library-native line/area marks to produce a centered narrowing shape, while Syncfusion and Graphify use their native funnel series. The final Graphify stage keeps a visible terminal width proportional to its real value.
+
+`pyramid` is explicitly a **population pyramid**, not a triangular funnel/pyramid series: national tourists are rendered to the left and international tourists to the right from a zero baseline, while source values remain positive. All four implementations are custom bilateral bar encodings. `gauge` represents hotel occupancy on a fixed 0–100 scale with a target at 80%; Graphify uses native ECharts `gauge`, while the other libraries compose chart primitives without adding a gauges package. `bullet` uses one linear scale, qualitative bands, an actual value and a distinct target marker. `timeline` places six point events on real `DateTime` positions; it represents milestones rather than Gantt task durations.
+
+Batch 13 support codes are `CNNN`, `CCCC`, `CCCN`, `CCCC`, and `CCCC` respectively. The final Cartesian test verifies **65 concepts × 4 libraries = 260 unique registrations**, 65 demos per library, four demos per concept, no missing keys, no duplicates and zero `unsupported` classifications. The 38 Batch 13 tests passed in the originating Flutter environment, including 30 responsive mounts at 320/500 px. Graphify options are JSON-only and the five Batch 13 configs generated valid SVG with the bundled ECharts 5.5.0 engine; real WebView/iframe execution remains unverified.
+
 ## Regla de aceptación
 
 Una demo cuenta si la librería dibuja las marcas principales. Se admiten datos transformados, varias series o charts del mismo motor y guías auxiliares. Un `CustomPainter` externo completo, una imagen, WebView ajena a Graphify o JavaScript arbitrario no cuentan. `N` = tipo/función incorporada; `C` = marcas/series de la librería más transformación propia; `S` = composición de paneles de la misma librería, ya sean varios widgets o varias cuadrículas en un gráfico. `U` queda prohibido en el contrato final. Las clasificaciones completas están en `ChartSupportMatrix.codes`; los tests exigen una entrada por ID y cuatro soportes no `unsupported`.
@@ -150,10 +158,10 @@ La tabla final de soportes se consulta en `lib/features/charts/data/chart_suppor
 
 | Librería | N | C | S | U | Realizable |
 |---|---:|---:|---:|---:|---:|
-| FL Chart | 12 | 47 | 6 | 0 | 65/65 |
-| Syncfusion | 23 | 37 | 5 | 0 | 65/65 |
-| Graphic | 14 | 45 | 6 | 0 | 65/65 |
-| Graphify | 20 | 40 | 5 | 0 | 65/65 |
+| FL Chart | 11 | 50 | 4 | 0 | 65/65 |
+| Syncfusion | 22 | 40 | 3 | 0 | 65/65 |
+| Graphic | 14 | 47 | 4 | 0 | 65/65 |
+| Graphify | 20 | 41 | 4 | 0 | 65/65 |
 
 ## Fuentes
 
