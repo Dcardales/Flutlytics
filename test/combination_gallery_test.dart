@@ -549,7 +549,7 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(const MaterialApp(home: CombinationsPage()));
       expect(tester.takeException(), isNull);
-      expect(find.text('30 combinaciones avanzadas'), findsOneWidget);
+      expect(find.text('combinaciones avanzadas'), findsOneWidget);
       await tester.scrollUntilVisible(
         find.byKey(const Key('combination-timeline-cumulative')),
         500,

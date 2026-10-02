@@ -24,7 +24,7 @@ class _CombinationsPageState extends State<CombinationsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '30 combinaciones avanzadas',
+                'combinaciones avanzadas',
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 4),
